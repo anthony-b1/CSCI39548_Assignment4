@@ -5,17 +5,78 @@ import {BrowserRouter as Router, Route} from 'react-router-dom';
 import Home from './components/Home';
 import UserProfile from './components/UserProfile';
 import LogIn from './components/Login';
+import Debits from './components/Debits';
+import axios from "axios";
+import {Link} from 'react-router-dom';
+import './App.css';
+import { v4 as uuid } from 'uuid';
 
 class App extends Component {
-  constructor() {  // Create and initialize state
-    super(); 
+  constructor(props) {  // Create and initialize state
+    super(props); 
     this.state = {
       accountBalance: 1234567.89,
       currentUser: {
-        userName: 'Joe Smith',
+        userName: 'Anthony',
         memberSince: '11/22/99',
-      }
-    }
+      },
+      debits: [],
+      credits: [],
+      debitSum: 0, 
+      creditSum: 0
+    };
+  }
+
+  async componentDidMount() {
+    let debits = await axios.get("https://moj-api.herokuapp.com/debits")
+    let credits = await axios.get("https://moj-api.herokuapp.com/credits")
+   
+    //get data from API response
+    debits = debits.data
+    credits = credits.data
+
+    let debitSum = 0, creditSum = 0;
+    // Calculating total debit 
+    debits.forEach((debit) => {
+      debitSum += debit.amount
+    })
+    // Calculating total credit
+    credits.forEach((credit) => {
+      creditSum += credit.amount
+    })
+    // Calculating accountBalance
+    let accountBalance = (creditSum - debitSum).toFixed(2);
+
+    this.setState({debits, credits, accountBalance, debitSum, creditSum});
+  }
+
+  addDebit = (e) => {
+    e.preventDefault();
+    const description  = e.target[0].value;
+    const amount  = Number(e.target[1].value);
+    // Getting the Current Date
+    const current = new Date();
+    const date = `${current.getFullYear()}-${current.getMonth()+1}-${current.getDate()}`;
+    // Create unique id 
+    const unique_id = uuid();
+
+    this.setState({debits: [...this.state.debits, {
+        id: unique_id, 
+        amount: amount, 
+        description: description, 
+        date: date 
+        }
+    ]});
+    // Calculate debitSum, creditSum, and accountBalance once again 
+    // Since componentDidMount is only called once
+    this.state.debitSum = 0, this.state.creditSum = 0;
+    this.state.debits.forEach((debit) => {
+      this.state.debitSum += debit.amount
+    })
+    this.state.credits.forEach((credit) => {
+      this.state.creditSum += credit.amount
+    })
+    this.state.accountBalance = (this.state.creditSum - this.state.debitSum).toFixed(2);
   }
 
   // Update state's currentUser (userName) after "Log In" button is clicked
@@ -32,6 +93,17 @@ class App extends Component {
       <UserProfile userName={this.state.currentUser.userName} memberSince={this.state.currentUser.memberSince}  />
     );
     const LogInComponent = () => (<LogIn user={this.state.currentUser} mockLogIn={this.mockLogIn} />)  // Pass props to "LogIn" component
+    // DebitsComponent
+    const { debits } = this.state;
+    const DebitsComponent = () => (
+      <div>
+        <Debits addDebit={this.addDebit} debits={debits} />
+        <p>Balance: {this.state.accountBalance}</p>
+        <p>Credits: {this.state.creditSum}</p>
+        <p>Debits: {this.state.debitSum}</p>
+        <Link to="/">Return to Home</Link>
+      </div>
+    )
 
     return (
       <Router>
@@ -39,6 +111,7 @@ class App extends Component {
           <Route exact path="/" render={HomeComponent}/>
           <Route exact path="/userProfile" render={UserProfileComponent}/>
           <Route exact path="/login" render={LogInComponent}/>
+          <Route exact path="/debits" render={DebitsComponent}/>
         </div>
       </Router>
     );
