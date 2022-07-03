@@ -6,6 +6,7 @@ import Home from './components/Home';
 import UserProfile from './components/UserProfile';
 import LogIn from './components/Login';
 import Debits from './components/Debits';
+import Credits from './components/Credits';
 import axios from "axios";
 import {Link} from 'react-router-dom';
 import './App.css';
@@ -50,6 +51,7 @@ class App extends Component {
     this.setState({debits, credits, accountBalance, debitSum, creditSum});
   }
 
+  // addDebit Function
   addDebit = (e) => {
     e.preventDefault();
     const description  = e.target[0].value;
@@ -79,6 +81,37 @@ class App extends Component {
     this.state.accountBalance = (this.state.creditSum - this.state.debitSum).toFixed(2);
   }
 
+  // addCredit Function
+  addCredit = (e) => {
+    e.preventDefault();
+    const description  = e.target[0].value;
+    const amount  = Number(e.target[1].value);
+    // Getting the Current Date
+    const current = new Date();
+    const date = `${current.getFullYear()}-${current.getMonth()+1}-${current.getDate()}`;
+    // Create unique id 
+    const unique_id = uuid();
+
+    this.setState({credits: [...this.state.credits, {
+        id: unique_id, 
+        amount: amount, 
+        description: description, 
+        date: date 
+        }
+    ]});
+
+    // Calculate debitSum, creditSum, and accountBalance once again 
+    // Since componentDidMount is only called once
+    this.state.debitSum = 0, this.state.creditSum = 0;
+    this.state.debits.forEach((debit) => {
+      this.state.debitSum += debit.amount
+    })
+    this.state.credits.forEach((credit) => {
+      this.state.creditSum += credit.amount
+    })
+    this.state.accountBalance = (this.state.creditSum - this.state.debitSum).toFixed(2);
+  }
+  
   // Update state's currentUser (userName) after "Log In" button is clicked
   mockLogIn = (logInInfo) => {  
     const newUser = {...this.state.currentUser}
@@ -93,6 +126,7 @@ class App extends Component {
       <UserProfile userName={this.state.currentUser.userName} memberSince={this.state.currentUser.memberSince}  />
     );
     const LogInComponent = () => (<LogIn user={this.state.currentUser} mockLogIn={this.mockLogIn} />)  // Pass props to "LogIn" component
+    
     // DebitsComponent
     const { debits } = this.state;
     const DebitsComponent = () => (
@@ -104,7 +138,17 @@ class App extends Component {
         <Link to="/">Return to Home</Link>
       </div>
     )
-
+    // CreditsComponent
+    const { credits } = this.state;
+    const CreditsComponent = () => (
+      <div>
+        <Credits addCredit={this.addCredit} credits={credits} />
+        <p>Balance: {this.state.accountBalance}</p>
+        <p>Credits: {this.state.creditSum}</p>
+        <p>Debits: {this.state.debitSum}</p>
+        <Link to="/">Return to Home</Link>
+      </div>
+    )
     return (
       <Router>
         <div>
@@ -112,6 +156,7 @@ class App extends Component {
           <Route exact path="/userProfile" render={UserProfileComponent}/>
           <Route exact path="/login" render={LogInComponent}/>
           <Route exact path="/debits" render={DebitsComponent}/>
+          <Route exact path="/credits" render={CreditsComponent}/>
         </div>
       </Router>
     );
