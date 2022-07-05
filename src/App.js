@@ -62,8 +62,10 @@ class App extends Component {
     this.state.credits.forEach((credit) => {
       this.state.creditSum += credit.amount
     })
+    let debitSum = this.state.debitSum.toFixed(2);  
+    let creditSum = this.state.creditSum.toFixed(2);
     let accountBalance = (this.state.creditSum - this.state.debitSum).toFixed(2);
-    this.setState({accountBalance})
+    this.setState({accountBalance, debitSum, creditSum})
   } 
 
   // addDebit Function
