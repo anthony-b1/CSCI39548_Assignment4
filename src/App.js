@@ -132,9 +132,9 @@ class App extends Component {
     const DebitsComponent = () => (
       <div>
         <Debits addDebit={this.addDebit} debits={debits} />
-        <p>Balance: {this.state.accountBalance}</p>
-        <p>Credits: {this.state.creditSum}</p>
-        <p>Debits: {this.state.debitSum}</p>
+        <p>Balance: ${this.state.accountBalance}</p>
+        <p>Credits: ${this.state.creditSum}</p>
+        <p>Debits: ${this.state.debitSum}</p>
         <Link to="/">Return to Home</Link>
       </div>
     )
@@ -143,9 +143,9 @@ class App extends Component {
     const CreditsComponent = () => (
       <div>
         <Credits addCredit={this.addCredit} credits={credits} />
-        <p>Balance: {this.state.accountBalance}</p>
-        <p>Credits: {this.state.creditSum}</p>
-        <p>Debits: {this.state.debitSum}</p>
+        <p>Balance: ${this.state.accountBalance}</p>
+        <p>Credits: ${this.state.creditSum}</p>
+        <p>Debits: ${this.state.debitSum}</p>
         <Link to="/">Return to Home</Link>
       </div>
     )
