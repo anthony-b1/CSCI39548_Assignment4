@@ -51,6 +51,21 @@ class App extends Component {
     this.setState({debits, credits, accountBalance, debitSum, creditSum});
   }
 
+  // Update Balance Function 
+  // Calculate debitSum, creditSum, and accountBalance once again 
+  // Since componentDidMount is only called once
+  updateBal = () => {
+    this.state.debitSum = 0, this.state.creditSum = 0;
+    this.state.debits.forEach((debit) => {
+      this.state.debitSum += debit.amount
+    })
+    this.state.credits.forEach((credit) => {
+      this.state.creditSum += credit.amount
+    })
+    let accountBalance = (this.state.creditSum - this.state.debitSum).toFixed(2);
+    this.setState({accountBalance})
+  } 
+
   // addDebit Function
   addDebit = (e) => {
     e.preventDefault();
@@ -68,17 +83,10 @@ class App extends Component {
         description: description, 
         date: date 
         }
-    ]});
-    // Calculate debitSum, creditSum, and accountBalance once again 
-    // Since componentDidMount is only called once
-    this.state.debitSum = 0, this.state.creditSum = 0;
-    this.state.debits.forEach((debit) => {
-      this.state.debitSum += debit.amount
-    })
-    this.state.credits.forEach((credit) => {
-      this.state.creditSum += credit.amount
-    })
-    this.state.accountBalance = (this.state.creditSum - this.state.debitSum).toFixed(2);
+    ]},
+      // Callback function to calculate balance since setState is async
+      this.updateBal
+    );
   }
 
   // addCredit Function
@@ -98,18 +106,10 @@ class App extends Component {
         description: description, 
         date: date 
         }
-    ]});
-
-    // Calculate debitSum, creditSum, and accountBalance once again 
-    // Since componentDidMount is only called once
-    this.state.debitSum = 0, this.state.creditSum = 0;
-    this.state.debits.forEach((debit) => {
-      this.state.debitSum += debit.amount
-    })
-    this.state.credits.forEach((credit) => {
-      this.state.creditSum += credit.amount
-    })
-    this.state.accountBalance = (this.state.creditSum - this.state.debitSum).toFixed(2);
+    ]},
+      // Callback function to calculate balance since setState is async
+      this.updateBal
+    );
   }
   
   // Update state's currentUser (userName) after "Log In" button is clicked
