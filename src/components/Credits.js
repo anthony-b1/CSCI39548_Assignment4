@@ -5,7 +5,7 @@ const Credits = (props) => {
         const { credits } = props;
         return credits.map((credit) => {
         let date = credit.date.slice(0,10);
-        return <li key={credit.id}>{credit.amount} {credit.description} {date}</li>
+        return <li key={credit.id}>${credit.amount} {credit.description} {date}</li>
         }) 
     }
     return (
@@ -16,7 +16,7 @@ const Credits = (props) => {
             <label>Description</label>
             <input type="text" name="description" />
             <label>Amount</label>
-            <input type="number" name="amount" />
+            <input type="number" step = "0.01" name="amount" />
             <button type="submit">Add Credit</button>
         </form>
         </div>
