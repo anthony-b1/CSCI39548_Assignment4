@@ -55,16 +55,16 @@ class App extends Component {
   // Calculate debitSum, creditSum, and accountBalance once again 
   // Since componentDidMount is only called once
   updateBal = () => {
-    this.state.debitSum = 0, this.state.creditSum = 0;
+    let debitSum = 0, creditSum = 0;
     this.state.debits.forEach((debit) => {
-      this.state.debitSum += debit.amount
+      debitSum += debit.amount
     })
     this.state.credits.forEach((credit) => {
-      this.state.creditSum += credit.amount
+      creditSum += credit.amount
     })
-    let debitSum = this.state.debitSum.toFixed(2);  
-    let creditSum = this.state.creditSum.toFixed(2);
-    let accountBalance = (this.state.creditSum - this.state.debitSum).toFixed(2);
+    debitSum = debitSum.toFixed(2);  
+    creditSum = creditSum.toFixed(2);
+    let accountBalance = (creditSum - debitSum).toFixed(2);
     this.setState({accountBalance, debitSum, creditSum})
   } 
 
